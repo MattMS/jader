@@ -1,0 +1,43 @@
+#!/usr/bin/env node
+
+var program = require('commander'),
+	jader = require('../');
+
+program
+.version(jader.version)
+.usage('[options]')
+.on('--help', function () {
+	var c = console.log;
+	c('  Examples:');
+	c('');
+	c('    # Start server in current directory on localhost:80');
+	c('    $ jader');
+	c('');
+	c('    # Start on custom address on port 80');
+	c('    $ jader 127.0.0.1');
+	c('');
+	c('    # Start on custom port on localhost');
+	c('    $ jader 1337');
+})
+//.option('-c, --compile', 'Compile the pages')
+.parse(process.argv);
+
+var ip = 'localhost';  // '127.0.0.1'
+var port = 80;
+
+if (program.args.length >= 1) {
+	var address = program.args[0];
+	if (address.indexOf(':') >= 0) {
+		var parts = address.split(':');
+		ip = parts[0];
+		port = parts[1];
+	} else {
+		if (isNaN(address)) {
+			ip = address;
+		} else {
+			port = parseInt(address);
+		}
+	}
+}
+
+jader.startServer(port, ip);

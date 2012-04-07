@@ -1,0 +1,29 @@
+{
+	"author": "Matt McKellar-Spence <matt@mattms.com> (http://www.mattms.com)",
+	"bin": {
+		"jader": "./bin/jader"
+	},
+	"dependencies": {
+		"commander": "0.5.2",
+		"express": "2.5.8",
+		"jade": "0.21.0"
+	},
+	"description": "Jade server",
+	"devDependencies": {},
+	"engines": {
+		"node": "*"
+	},
+	"homepage": "http://mattms.github.com/jader",
+	"keywords": [
+		"express",
+		"jade"
+	],
+	"main": "main.js",
+	"name": "jader",
+	"optionalDependencies": {},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/mattms/jader.git"
+	},
+	"version": "0.1.0"
+}
