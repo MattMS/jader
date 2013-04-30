@@ -4,19 +4,21 @@
 		"jader": "./bin/jader"
 	},
 	"dependencies": {
-		"commander": "0.5.2",
-		"express": "2.5.8",
-		"jade": "0.21.0"
+		"coffee-script": "*",
+		"commander": "*",
+		"jade": "*",
+		"node-static": "*",
+		"stylus": "*"
 	},
-	"description": "Jade server",
+	"description": "Simple tool to compile and serve Jade, CoffeeScript and Stylus files",
 	"devDependencies": {},
 	"engines": {
 		"node": "*"
 	},
 	"homepage": "http://mattms.github.com/jader",
 	"keywords": [
-		"express",
-		"jade"
+		"jade",
+		"server"
 	],
 	"main": "main.js",
 	"name": "jader",
@@ -25,5 +27,5 @@
 		"type": "git",
 		"url": "git://github.com/mattms/jader.git"
 	},
-	"version": "0.1.0"
+	"version": "0.2.0"
 }

@@ -1,0 +1,19 @@
+!!! 5
+html
+    head
+        link(href="/index.css", rel="stylesheet")
+        :coffeescript
+            ready = ->
+                item = document.getElementById 'coffee_test'
+                item.innerHTML = 'CoffeeScript in layout.jade loaded'
+            if document.addEventListener
+                document.addEventListener 'DOMContentLoaded', ready, false
+            else if document.attachEvent
+                document.attachEvent 'onreadystatechange', ready
+        :stylus
+            #layout_stylus_test
+                color green
+        block scripts
+    body
+        p Loaded content from layout.jade
+        block content

@@ -3,29 +3,39 @@
 var program = require('commander'),
 	jader = require('../');
 
+function show_help () {
+	var lines = [
+		'  Examples:',
+		'',
+		'    # Start server in current directory on localhost:80',
+		'    $ jader',
+		'',
+		'    # Start on custom address on port 80',
+		'    $ jader -h 127.0.0.1',
+		'',
+		'    # Start on custom port on localhost',
+		'    $ jader -p 1337'
+	];
+	lines.forEach(function show_help (line) {
+		console.log(line);
+	});
+}
+
 program
 .version(jader.version)
 .usage('[options]')
-.on('--help', function () {
-	var c = console.log;
-	c('  Examples:');
-	c('');
-	c('    # Start server in current directory on localhost:80');
-	c('    $ jader');
-	c('');
-	c('    # Start on custom address on port 80');
-	c('    $ jader 127.0.0.1');
-	c('');
-	c('    # Start on custom port on localhost');
-	c('    $ jader 1337');
-})
+.option('-h, --hostname <host>', 'Set host [localhost]', String, 'localhost')
+.option('-p, --port <port>', 'Set port [80]', Number, 80)
 //.option('-c, --compile', 'Compile the pages')
+.on('--help', show_help)
 .parse(process.argv);
 
-var ip = 'localhost';  // '127.0.0.1'
-var port = 80;
+var config = {};
+config.hostname = program.hostname;
+config.path = process.cwd();
+config.port = program.port;
 
-if (program.args.length >= 1) {
+/*if (program.args.length >= 1) {
 	var address = program.args[0];
 	if (address.indexOf(':') >= 0) {
 		var parts = address.split(':');
@@ -38,6 +48,6 @@ if (program.args.length >= 1) {
 			port = parseInt(address);
 		}
 	}
-}
+}*/
 
-jader.startServer(port, ip);
+jader.startServer(config);
