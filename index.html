@@ -1,0 +1,43 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="IE=edge" http-equiv="X-UA-Compatible"><meta content="Matt McKellar-Spence" name="author"><meta content="GitHub page of Jader" name="description"><meta content="width=device-width, initial-scale=1" name="viewport"><title>Jader</title><link href="http://css.mattms.info/basic/light/index.css?t=2014-12-21T1300+10" rel="stylesheet" title="Basic light" type="text/css"><link href="http://css.mattms.info/basic/dark/index.css?t=2014-12-21T1300+10" rel="alternate stylesheet" title="Basic dark" type="text/css"><link href="http://css.mattms.info/solarized/dark/index.css?t=2014-12-21T1300+10" rel="alternate stylesheet" title="Solarized dark" type="text/css"></head><body><div class="container"><h1 id="jade-server">Jade server</h1>
+<p>Jader lets you start a basic server in any folder.
+It compiles
+<a href="http://jade-lang.com/">Jade</a>
+templates, with embedded or linked
+<a href="http://coffeescript.org/">CoffeeScript</a>
+and
+<a href="https://learnboost.github.io/stylus/">Stylus</a>
+files.</p>
+<p>Please note: This is only intended for aiding development.</p>
+<p>If you want to use Jade templates in production, consider using
+<a href="http://expressjs.com/">Express</a>
+or compile static files with <a href="http://gulpjs.com/">Gulp</a> and then serve
+them with <a href="http://nginx.org/">Nginx</a>.</p>
+<h2 id="usage">Usage</h2>
+<p>You should install Jader globally so that it creates the executable
+script for you.</p>
+<pre><code>sudo npm install -g jader
+</code></pre><p>You can then start the server on <a href="http://localhost/">localhost</a>
+in any directory:</p>
+<pre><code>jader
+</code></pre><p>If you need to use a different port to 80, use:</p>
+<pre><code>jader -p 1337
+</code></pre><p>Jader will also serve any other static files in the directory.</p>
+<h2 id="local-variables">Local variables</h2>
+<p>You can test the variables in templates by including a &quot;.json&quot; file
+along with each &quot;.jade&quot; file.</p>
+<p>Any JSON file with the same basename as the Jade template will be read
+and passed into the template as local variables.</p>
+<h3 id="example">Example</h3>
+<p>index.jade</p>
+<pre><code>doctype html
+html
+    head
+        title #{title}
+    body
+        p #{message}
+</code></pre><p>index.json</p>
+<pre><code>{
+    &quot;title&quot;: &quot;My Page&quot;,
+    &quot;message&quot;: &quot;It works!&quot;
+}
+</code></pre></div><footer class="container"><hr><ul><li><a href="https://github.com/MattMS/jader">View on GitHub</a></li></ul></footer></body></html>
