@@ -1,0 +1,19 @@
+doctype html
+html(lang="en")
+	head
+		meta(charset="utf-8")
+		meta(content="IE=edge", http-equiv="X-UA-Compatible")
+		meta(content="Matt McKellar-Spence", name="author")
+		meta(content="GitHub page of Jader", name="description")
+		meta(content="width=device-width, initial-scale=1", name="viewport")
+		title Jader
+
+		block css
+			include ./_css.jade
+	body
+		.container
+			block content
+		footer.container
+			hr
+			ul
+				li: a(href="https://github.com/MattMS/jader") View on GitHub
