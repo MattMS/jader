@@ -1,31 +1,38 @@
 {
-	"author": "Matt McKellar-Spence <matt@mattms.com> (http://www.mattms.com)",
-	"bin": {
-		"jader": "./bin/jader"
-	},
-	"dependencies": {
-		"coffee-script": "*",
-		"commander": "*",
-		"jade": "*",
-		"node-static": "*",
-		"stylus": "*"
-	},
-	"description": "Simple tool to compile and serve Jade, CoffeeScript and Stylus files",
-	"devDependencies": {},
-	"engines": {
-		"node": "*"
-	},
-	"homepage": "http://mattms.github.com/jader",
-	"keywords": [
-		"jade",
-		"server"
-	],
-	"main": "main.js",
-	"name": "jader",
-	"optionalDependencies": {},
-	"repository": {
-		"type": "git",
-		"url": "git://github.com/mattms/jader.git"
-	},
-	"version": "0.2.0"
+  "author": "Matt McKellar-Spence",
+  "bin": {
+    "jader": "./bin/jader"
+  },
+  "dependencies": {
+    "coffee-script": "*",
+    "commander": "*",
+    "jade": "*",
+    "node-static": "*",
+    "stylus": "*"
+  },
+  "description": "Simple tool to compile and serve Jade, CoffeeScript and Stylus files",
+  "devDependencies": {
+    "gulp": "^3.8.10",
+    "gulp-jade": "^0.11.0",
+    "marked": "^0.3.3"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "homepage": "http://mattms.github.com/jader",
+  "keywords": [
+    "coffee-script",
+    "jade",
+    "server",
+    "static",
+    "stylus"
+  ],
+  "main": "main.js",
+  "name": "jader",
+  "optionalDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mattms/jader.git"
+  },
+  "version": "0.2.0"
 }
