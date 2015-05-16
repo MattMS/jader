@@ -4,12 +4,12 @@
     "jader": "./bin/jader"
   },
   "dependencies": {
-    "coffee-script": "*",
-    "commander": "*",
-    "jade": "*",
+    "coffee-script": "^1.9.2",
+    "commander": "^2.8.1",
+    "jade": "^1.9.2",
     "marked": "^0.3.3",
-    "node-static": "*",
-    "stylus": "*"
+    "node-static": "^0.7.6",
+    "stylus": "^0.51.1"
   },
   "description": "Simple tool to compile and serve Jade, CoffeeScript and Stylus files",
   "devDependencies": {
