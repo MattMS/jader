@@ -1,16 +1,44 @@
 extends layout
 
 block content
-    p Loaded content from index.jade
-    p= first_p
-    v = 1 + 2
-    p "1 + 2 = #{v}" shows Jade variable assignment works
-    p#layout_stylus_test Shows in green if Stylus in layout.jade worked
-    p#external_styl_test Shows in green if index.styl loaded
-    p#coffee_test CoffeeScript in layout.jade did not load
-    p: a(href="/other") View other Jade page
-    p: a(href="/other.html") Same page with .html extension
-    p: a(href="/plain.html") View plain html page
-    p: a(href="/plain") View plain html page (no extension)
-    p: a(href="/nodejs.png"): img(alt="Node.js logo", src="/nodejs.png")
-    p The Node.js logo will show above this if static files are being served
+	p Loaded content from index.jade
+
+	p= first_p
+
+	h2 Code
+
+	- v = 1 + 2
+	p "1 + 2 = #{v}" shows 3 if Jade variable assignment works
+
+	h2 Stylus
+
+	p#layout_stylus_test Shows in green if Stylus in layout.jade worked
+	p#external_styl_test Shows in green if index.styl loaded
+
+	h2 CoffeeScript
+
+	p#coffee_test CoffeeScript in layout.jade did not load
+
+	h2 Markdown
+
+	:markdown
+		This is inline Markdown!
+
+	include:markdown _links.md
+
+block scripts
+	script(type="text/javascript")
+		:coffeescript
+			ready = ->
+				item = document.getElementById 'coffee_test'
+				item.innerHTML = 'CoffeeScript in layout.jade loaded'
+			if document.addEventListener
+				document.addEventListener 'DOMContentLoaded', ready, false
+			else if document.attachEvent
+				document.attachEvent 'onreadystatechange', ready
+
+block styles
+	style(type="text/css")
+		:stylus
+			#layout_stylus_test
+				color green
