@@ -4,7 +4,8 @@ Jader lets you start a basic server in any folder.
 It compiles
 [Jade](http://jade-lang.com/)
 templates, with embedded or linked
-[CoffeeScript](http://coffeescript.org/)
+[CoffeeScript](http://coffeescript.org/),
+[Markdown](https://daringfireball.net/projects/markdown/)
 and
 [Stylus](https://learnboost.github.io/stylus/)
 files.
