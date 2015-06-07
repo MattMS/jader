@@ -11,7 +11,7 @@
     "node-static": "^0.7.6",
     "stylus": "^0.51.1"
   },
-  "description": "Simple tool to compile and serve Jade, CoffeeScript and Stylus files",
+  "description": "Simple tool to compile and serve Jade, CoffeeScript, Markdown and Stylus files",
   "devDependencies": {},
   "engines": {
     "node": "*"
@@ -20,6 +20,7 @@
   "keywords": [
     "coffee-script",
     "jade",
+    "markdown",
     "server",
     "static",
     "stylus"
@@ -27,6 +28,7 @@
   "main": "main.js",
   "name": "jader",
   "optionalDependencies": {},
+  "preferGlobal": true,
   "repository": {
     "type": "git",
     "url": "git://github.com/mattms/jader.git"
