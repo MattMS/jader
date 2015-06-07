@@ -32,7 +32,7 @@
     "url": "git://github.com/mattms/jader.git"
   },
   "scripts": {
-    "build_js": "coffee -c main.coffee",
+    "build_js": "coffee -c main.coffee.md",
     "test": "cd test && jader -p 1337"
   },
   "version": "0.3.0"
