@@ -12,11 +12,7 @@
     "stylus": "^0.51.1"
   },
   "description": "Simple tool to compile and serve Jade, CoffeeScript and Stylus files",
-  "devDependencies": {
-    "gulp": "^3.8.10",
-    "gulp-jade": "^0.11.0",
-    "marked": "^0.3.3"
-  },
+  "devDependencies": {},
   "engines": {
     "node": "*"
   },
