@@ -8,8 +8,10 @@ jade = require 'jade'
 static_files = require 'node-static'
 stylus = require 'stylus'
 
+package_json = require './package.json'
 
-exports.version = '0.2.0'
+
+exports.version = package_json.version
 
 file = new static_files.Server()
 
