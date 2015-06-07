@@ -14,181 +14,181 @@
 
 	package_json = require './package.json'
 
-
 	exports.version = package_json.version
 
-	file = new static_files.Server()
 
-	read_utf8 = encoding: 'utf8'
+## Reading files
 
-	error_page = '<!doctype html><html><body><h1>{h1}</h1></body></html>'
+	read_json_file = (json_file_path, callback)->
+		read_text_file json_file_path, (err, json_file_content)->
+			if err
+				callback {}
+			else
+				callback json.parse json_file_content
+
+
+	read_text_file = (file_path, callback)->
+		fs.readFile file_path, encoding: 'utf8', callback
+
+
+	read_text_file_or_500 = (req, res, file_path, callback)->
+		read_text_file file_path, (err, file_content)->
+			if err
+				console.error "Could not read #{file_path}"
+
+				res.statusCode = 500
+
+				respond_error req, res
+
+			else
+				callback file_content
 
 
 ## Compilers
 
-	compile_coffee = (raw_text, filename, callback)->
-		result = coffee.compile raw_text
+	compile = (req, res, file_path, compiler)->
+		read_text_file_or_500 file_path, (file_content)->
+			compiler req, res, file_content, file_path, (err, compiled_content)->
+				if err
+					console.error "Could not compile #{file_path}"
 
-		callback false, result
+					res.statusCode = 500
+
+					respond_error req, res
+
+				else
+					res.statusCode = 200
+
+					res.end compiled_content
 
 
-	compile_stylus = (raw_text, filename, callback)->
-		options = filename: filename
+	compile_coffee = (req, res, file_content, file_path, callback)->
+		res.setHeader 'Content-Type', 'text/javascript'
 
-		stylus.render raw_text, options, callback
+		callback false, coffee.compile file_content
+
+
+	compile_jade = (req, res, file_content, file_path, callback)->
+		base_path = file_path.slice 0, -5
+
+		read_json_file "#{base_path}.json", (json_obj)->
+			res.setHeader 'Content-Type', 'text/html'
+
+			jade_compiler = jade.compile file_content,
+				filename: file_path
+
+			callback false, jade_compiler json_obj
+
+
+	compile_stylus = (req, res, file_content, file_path, callback)->
+		stylus.render file_content,
+			filename: file_path
+		, (err, text)->
+			if not err
+				res.setHeader 'Content-Type', 'text/css'
+
+			callback err, text
+
+
+	find_compiler = (file_path)->
+		file_path_ext = path.extname file_path
+
+		for check in exports.compile_types
+			[url_ext, path_ext, compiler] = check
+
+			if file_path_ext == url_ext
+				base_path = file_path.slice 0, -url_ext.length
+
+				source_path = base_path + path_ext
+
+				fs.exists source_path, (exists)->
+					if exists
+						return callback source_path, compiler
+
+		callback false, false
+
+
+	exports.compile_types = [
+		['.css', '.styl', compile_stylus]
+		['.js', '.coffee', compile_coffee]
+		['.js', '.coffee.md', compile_coffee]
+		['.js', '.litcoffee', compile_coffee]
+		['.html', '.jade', compile_jade]
+	]
+
+
+## Responders
+
+	error_page = '<!doctype html><html><body><h1>{h1}</h1></body></html>'
+
+
+	respond_error = (req, res)->
+		res.setHeader 'Content-Type', 'text/html'
+
+		page = error_page.replace '{h1}', res.statusCode
+
+		res.end page
+
+
+	respond_file = (req, res, file_path)->
+		read_text_file_or_500 req, res, file_path, (err, file_content)->
+			res.statusCode = 200
+
+			res.end file_content
 
 
 ## Request handler
 
 	exports.handler = (config)->
+		static_server = new static_files.Server()
+
 		(req, res, next)->
-			console.log req.method + ' ' + req.url
-
-			if not next
-				next = ->
-					respond_error 404
+			console.log "#{req.method} #{req.url}"
 
 
-			respond_error = (code)->
-				res.writeHead code, 'Content-Type': 'text/html'
+			url_parts = url.parse req.url
 
-				page = error_page.replace '{h1}', code
+			url_path = url_parts.pathname
 
-				res.end page
+			if url_path.endsWith '/'
+				url_path += 'index.html'
 
+			url_path = url_parts.pathname.slice 1
 
-			respond_text = (text, mime_type)->
-				res.writeHead 200, 'Content-Type': mime_type
+Get the extension from the URL path.
 
-				res.end text
+			url_ext = path.extname url_path
 
+Default to `.html` if no extension is given.
 
-			respond_file = (file_name, mime_type)->
-				fs.readFile file_name, read_utf8, (err, raw_text)->
-					if err
-						console.error 'Could not read ' + file_name
-
-						respond_error 500
-
-					else
-						respond_text raw_text, mime_type
+			if '' == url_ext
+				url_path += '.html'
 
 
-			respond_compiled_text = (fn_base, ext_from, ext_to, mime_type, compiler)->
-				full_fn_from = path.join config.path, fn_base + ext_from
+Translate the URL path to a file on the server file system.
 
-				full_fn_to = path.join config.path, fn_base + ext_to
+			file_path = path.join config.path, url_path
 
-				files_exist = ->
-					fs.readFile full_fn_from, read_utf8, (err, raw_text)->
-						if err
-							console.error 'Could not read ' + full_fn_from
+			fs.exists file_path, (exists)->
+				if exists
+					console.log file_path
 
-							respond_error 500
+					return static_server.serve req, res
 
-						else
-							compiler raw_text, full_fn_from, (err, compiled_text)->
-								if err
-									console.error 'Could not compile ' + full_fn_from
-
-									respond_error 500
-
-								else
-									respond_text compiled_text, mime_type
-
-				fs.exists full_fn_to, (exists)->
-					if exists
-						respond_file full_fn_to, mime_type
-					else
-						fs.exists full_fn_from, (exists)->
-							if exists
-								files_exist()
-							else
-								next()
-
-
-			respond_jade = (fn_base)->
-				serve_jade = (fn_jade)->
-					fs.readFile fn_jade, read_utf8, (err, jade_text)->
-						if err
-							console.error 'Could not read ' + fn_jade
-							respond_error 500
-						else
-							fs.readFile fn_base + '.json', read_utf8, (err, json_text)->
-								if err
-									json_obj = {}
-								else
-									json_obj = JSON.parse json_text
-
-								jade_cfg =
-									filename: path.join config.path, fn_jade
-								fn = jade.compile jade_text, jade_cfg
-								html = fn json_obj
-								respond_text html, 'text/html'
-
-				fn_jade = fn_base + '.jade'
-				fs.exists fn_jade, (exists)->
-					if exists
-						serve_jade fn_jade
-					else
-						fn_jade = fn_base + '/index.jade'
-						fs.exists fn_jade, (exists)->
-							if exists
-								serve_jade fn_jade
-							else
-								next()
-
-
-			url_q = url.parse req.url
-
-			req_path =
-				if '/' == url_q.pathname
-					'index'
 				else
-					url_q.pathname.slice 1
+					find_compiler file_path, (source_path, compiler)->
+						if source_path and compiler
+							return compile req, res, source_path, compiler
 
-			req_ext = path.extname req_path
-
-			if ('.html' == req_ext) or ('' == req_ext)
-				fn_base =
-					if '.html' == req_ext
-						req_path.slice 0, -5
-					else
-						req_path
-
-				fs.exists fn_base + '.html', (exists)->
-					if exists
-						respond_file fn_base + '.html', 'text/html'
-
-					else
-						fs.exists fn_base + 'index.html', (exists)->
-							if exists
-								respond_file fn_base + 'index.html', 'text/html'
-
-							else
-								respond_jade fn_base
-
-			else if '.css' == req_ext
-				fn_base = req_path.slice 0, -4
-
-				respond_compiled_text fn_base, '.styl', '.css', 'text/css', compile_stylus
-
-			else if '.js' == req_ext
-				fn_base = req_path.slice 0, -3
-
-				respond_compiled_text fn_base, '.coffee', '.js', 'text/javascript', compile_coffee
+			if next
+				next()
 
 			else
-				full_fn = path.join config.path, req_path
+				console.error "Missing #{req.url}"
 
-				console.log full_fn
+				res.statusCode = 404
 
-				fs.exists full_fn, (exists)->
-					if exists
-						file.serve req, res
-
-					else
-						next()
+				respond_error req, res
 
 
 ## Start server
@@ -200,4 +200,4 @@
 
 		app.listen config.port, config.hostname
 
-		console.log 'Jader running on ' + config.hostname + ':' + config.port
+		console.log "Jader running on #{config.hostname}:#{config.port}"
