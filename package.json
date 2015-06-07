@@ -35,5 +35,8 @@
     "type": "git",
     "url": "git://github.com/mattms/jader.git"
   },
+  "scripts": {
+    "test": "cd test && jader -p 1337"
+  },
   "version": "0.3.0"
 }
