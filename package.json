@@ -4,9 +4,9 @@
     "jader": "./bin/jader"
   },
   "dependencies": {
-    "coffee-script": "^1.9.2",
+    "coffee-script": "^1.9.3",
     "commander": "^2.8.1",
-    "jade": "^1.9.2",
+    "jade": "^1.10.0",
     "marked": "^0.3.3",
     "node-static": "^0.7.6",
     "stylus": "^0.51.1"
