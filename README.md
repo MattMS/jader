@@ -22,7 +22,7 @@ them with [Nginx](http://nginx.org/).
 You should install Jader globally so that it creates the executable
 script for you.
 
-	sudo npm install -g jader
+	npm install -g jader
 
 You can then start the server on [localhost](http://localhost/)
 in any directory:
