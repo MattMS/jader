@@ -54,7 +54,7 @@
     return read_text_file_or_500(req, res, file_path, function(file_content) {
       return compiler(req, res, file_content, file_path, function(err, compiled_content) {
         if (err) {
-          console.error("Could not compile " + file_path);
+          console.error('Could not compile %s', file_path);
           res.statusCode = 500;
           return respond_error(req, res);
         } else {
@@ -72,10 +72,10 @@
 
   compile_jade = function(req, res, file_content, file_path, callback) {
     var base_path;
+    res.setHeader('Content-Type', 'text/html');
     base_path = file_path.slice(0, -5);
     return read_json_file(base_path + ".json", function(json_obj) {
       var jade_compiler;
-      res.setHeader('Content-Type', 'text/html');
       jade_compiler = jade.compile(file_content, {
         filename: file_path
       });
@@ -95,23 +95,29 @@
   };
 
   find_compiler = function(file_path, callback) {
-    var base_path, check, compiler, file_path_ext, i, len, path_ext, ref, source_path, url_ext;
+    var check_compiler, file_path_ext;
     file_path_ext = path.extname(file_path);
-    ref = exports.compile_types;
-    for (i = 0, len = ref.length; i < len; i++) {
-      check = ref[i];
-      url_ext = check[0], path_ext = check[1], compiler = check[2];
-      if (file_path_ext === url_ext) {
+    check_compiler = function(check_index) {
+      var base_path, compiler, path_ext, ref, source_path, url_ext;
+      if (check_index >= exports.compile_types.length) {
+        return callback(false, false);
+      }
+      ref = exports.compile_types[check_index], url_ext = ref[0], path_ext = ref[1], compiler = ref[2];
+      if (file_path_ext !== url_ext) {
+        return check_compiler(check_index + 1);
+      } else {
         base_path = file_path.slice(0, -url_ext.length);
         source_path = base_path + path_ext;
-        fs.exists(source_path, function(exists) {
+        return fs.exists(source_path, function(exists) {
           if (exists) {
             return callback(source_path, compiler);
+          } else {
+            return check_compiler(check_index + 1);
           }
         });
       }
-    }
-    return callback(false, false);
+    };
+    return check_compiler(0);
   };
 
   exports.compile_types = [['.css', '.styl', compile_stylus], ['.js', '.coffee', compile_coffee], ['.js', '.coffee.md', compile_coffee], ['.js', '.litcoffee', compile_coffee], ['.html', '.jade', compile_jade]];
@@ -150,25 +156,24 @@
       }
       file_path = path.join(config.path, url_path);
       console.info('File path: %s', file_path);
-      fs.exists(file_path, function(exists) {
+      return fs.exists(file_path, function(exists) {
         if (exists) {
-          console.log(file_path);
+          console.log('Send static file: %s', file_path);
           return static_server.serve(req, res);
         } else {
           return find_compiler(file_path, function(source_path, compiler) {
             if (source_path && compiler) {
               return compile(req, res, source_path, compiler);
+            } else if (next) {
+              return next();
+            } else {
+              console.warn('Missing %s', req.url);
+              res.statusCode = 404;
+              return respond_error(req, res);
             }
           });
         }
       });
-      if (next) {
-        return next();
-      } else {
-        console.error("Missing " + req.url);
-        res.statusCode = 404;
-        return respond_error(req, res);
-      }
     };
   };
 
@@ -177,7 +182,7 @@
     listener = exports.handler(config);
     app = http.createServer(listener);
     app.listen(config.port, config.hostname);
-    return console.log("Jader running on " + config.hostname + ":" + config.port);
+    return console.log('Jader running on %s:%s', config.hostname, config.port);
   };
 
 }).call(this);

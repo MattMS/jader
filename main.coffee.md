@@ -23,6 +23,7 @@
 		read_text_file json_file_path, (err, json_file_content)->
 			if err
 				callback {}
+
 			else
 				callback json.parse json_file_content
 
@@ -50,7 +51,7 @@
 		read_text_file_or_500 req, res, file_path, (file_content)->
 			compiler req, res, file_content, file_path, (err, compiled_content)->
 				if err
-					console.error "Could not compile #{file_path}"
+					console.error 'Could not compile %s', file_path
 
 					res.statusCode = 500
 
@@ -69,11 +70,11 @@
 
 
 	compile_jade = (req, res, file_content, file_path, callback)->
+		res.setHeader 'Content-Type', 'text/html'
+
 		base_path = file_path.slice 0, -5
 
 		read_json_file "#{base_path}.json", (json_obj)->
-			res.setHeader 'Content-Type', 'text/html'
-
 			jade_compiler = jade.compile file_content,
 				filename: file_path
 
@@ -93,19 +94,28 @@
 	find_compiler = (file_path, callback)->
 		file_path_ext = path.extname file_path
 
-		for check in exports.compile_types
-			[url_ext, path_ext, compiler] = check
+		check_compiler = (check_index)->
+			if check_index >= exports.compile_types.length
+				return callback false, false
 
-			if file_path_ext == url_ext
+			[url_ext, path_ext, compiler] = exports.compile_types[check_index]
+
+			if file_path_ext != url_ext
+				check_compiler check_index + 1
+
+			else
 				base_path = file_path.slice 0, -url_ext.length
 
 				source_path = base_path + path_ext
 
 				fs.exists source_path, (exists)->
 					if exists
-						return callback source_path, compiler
+						callback source_path, compiler
 
-		callback false, false
+					else
+						check_compiler check_index + 1
+
+		check_compiler 0
 
 
 	exports.compile_types = [
@@ -146,6 +156,8 @@
 			console.log '%s %s', req.method, req.url
 
 
+### Standardise requested URL
+
 			url_parts = url.parse req.url
 
 			url_path = url_parts.pathname
@@ -171,26 +183,46 @@ Translate the URL path to a file on the server file system.
 
 			console.info 'File path: %s', file_path
 
+
+### Static file
+
+Check if the file exists and use static server if it does.
+
 			fs.exists file_path, (exists)->
 				if exists
-					console.log file_path
+					console.log 'Send static file: %s', file_path
 
-					return static_server.serve req, res
+					static_server.serve req, res
+
+
+### Find and use compiler
+
+If the file does not exist, find a compiler for it.
 
 				else
 					find_compiler file_path, (source_path, compiler)->
 						if source_path and compiler
-							return compile req, res, source_path, compiler
+							compile req, res, source_path, compiler
 
-			if next
-				next()
 
-			else
-				console.error "Missing #{req.url}"
+### Next handler
 
-				res.statusCode = 404
+If no file exists, then continue with the next handler.
 
-				respond_error req, res
+						else if next
+							next()
+
+
+### 404
+
+If no next handler was given, then send a 404 error.
+
+						else
+							console.warn 'Missing %s', req.url
+
+							res.statusCode = 404
+
+							respond_error req, res
 
 
 ## Start server
@@ -202,4 +234,4 @@ Translate the URL path to a file on the server file system.
 
 		app.listen config.port, config.hostname
 
-		console.log "Jader running on #{config.hostname}:#{config.port}"
+		console.log 'Jader running on %s:%s', config.hostname, config.port
