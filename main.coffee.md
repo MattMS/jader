@@ -34,7 +34,7 @@
 	read_text_file_or_500 = (req, res, file_path, callback)->
 		read_text_file file_path, (err, file_content)->
 			if err
-				console.error "Could not read #{file_path}"
+				console.error 'Could not read %s', file_path
 
 				res.statusCode = 500
 
@@ -47,7 +47,7 @@
 ## Compilers
 
 	compile = (req, res, file_path, compiler)->
-		read_text_file_or_500 file_path, (file_content)->
+		read_text_file_or_500 req, res, file_path, (file_content)->
 			compiler req, res, file_content, file_path, (err, compiled_content)->
 				if err
 					console.error "Could not compile #{file_path}"

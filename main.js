@@ -41,7 +41,7 @@
   read_text_file_or_500 = function(req, res, file_path, callback) {
     return read_text_file(file_path, function(err, file_content) {
       if (err) {
-        console.error("Could not read " + file_path);
+        console.error('Could not read %s', file_path);
         res.statusCode = 500;
         return respond_error(req, res);
       } else {
@@ -51,7 +51,7 @@
   };
 
   compile = function(req, res, file_path, compiler) {
-    return read_text_file_or_500(file_path, function(file_content) {
+    return read_text_file_or_500(req, res, file_path, function(file_content) {
       return compiler(req, res, file_content, file_path, function(err, compiled_content) {
         if (err) {
           console.error("Could not compile " + file_path);
