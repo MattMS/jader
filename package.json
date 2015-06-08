@@ -37,5 +37,5 @@
     "build_js": "coffee -c main.coffee.md",
     "test": "cd test && jader -p 1337"
   },
-  "version": "0.4.1"
+  "version": "0.4.2"
 }
