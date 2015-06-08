@@ -153,7 +153,7 @@
 		static_server = new static_files.Server()
 
 		(req, res, next)->
-			console.log '%s %s', req.method, req.url
+			console.info '%s %s', req.method, req.url
 
 
 ### Standardise requested URL
@@ -181,7 +181,7 @@ Translate the URL path to a file on the server file system.
 
 			file_path = path.join config.path, url_path
 
-			console.info 'File path: %s', file_path
+			console.log 'File path: %s', file_path
 
 
 ### Static file
@@ -234,4 +234,4 @@ If no next handler was given, then send a 404 error.
 
 		app.listen config.port, config.hostname
 
-		console.log 'Jader running on %s:%s', config.hostname, config.port
+		console.info 'Jader running on %s:%s', config.hostname, config.port

@@ -143,7 +143,7 @@
     static_server = new static_files.Server();
     return function(req, res, next) {
       var file_path, url_ext, url_parts, url_path;
-      console.log('%s %s', req.method, req.url);
+      console.info('%s %s', req.method, req.url);
       url_parts = url.parse(req.url);
       url_path = url_parts.pathname;
       if (url_path.endsWith('/')) {
@@ -155,7 +155,7 @@
         url_path += '.html';
       }
       file_path = path.join(config.path, url_path);
-      console.info('File path: %s', file_path);
+      console.log('File path: %s', file_path);
       return fs.exists(file_path, function(exists) {
         if (exists) {
           console.log('Send static file: %s', file_path);
@@ -182,7 +182,7 @@
     listener = exports.handler(config);
     app = http.createServer(listener);
     app.listen(config.port, config.hostname);
-    return console.log('Jader running on %s:%s', config.hostname, config.port);
+    return console.info('Jader running on %s:%s', config.hostname, config.port);
   };
 
 }).call(this);
