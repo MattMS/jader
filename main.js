@@ -137,18 +137,19 @@
     static_server = new static_files.Server();
     return function(req, res, next) {
       var file_path, url_ext, url_parts, url_path;
-      console.log(req.method + " " + req.url);
+      console.log('%s %s', req.method, req.url);
       url_parts = url.parse(req.url);
       url_path = url_parts.pathname;
       if (url_path.endsWith('/')) {
         url_path += 'index.html';
       }
-      url_path = url_parts.pathname.slice(1);
+      url_path = url_path.slice(1);
       url_ext = path.extname(url_path);
       if ('' === url_ext) {
         url_path += '.html';
       }
       file_path = path.join(config.path, url_path);
+      console.info('File path: %s', file_path);
       fs.exists(file_path, function(exists) {
         if (exists) {
           console.log(file_path);

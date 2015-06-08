@@ -143,7 +143,7 @@
 		static_server = new static_files.Server()
 
 		(req, res, next)->
-			console.log "#{req.method} #{req.url}"
+			console.log '%s %s', req.method, req.url
 
 
 			url_parts = url.parse req.url
@@ -153,7 +153,7 @@
 			if url_path.endsWith '/'
 				url_path += 'index.html'
 
-			url_path = url_parts.pathname.slice 1
+			url_path = url_path.slice 1
 
 Get the extension from the URL path.
 
@@ -168,6 +168,8 @@ Default to `.html` if no extension is given.
 Translate the URL path to a file on the server file system.
 
 			file_path = path.join config.path, url_path
+
+			console.info 'File path: %s', file_path
 
 			fs.exists file_path, (exists)->
 				if exists
