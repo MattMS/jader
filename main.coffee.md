@@ -90,7 +90,7 @@
 			callback err, text
 
 
-	find_compiler = (file_path)->
+	find_compiler = (file_path, callback)->
 		file_path_ext = path.extname file_path
 
 		for check in exports.compile_types

@@ -94,7 +94,7 @@
     });
   };
 
-  find_compiler = function(file_path) {
+  find_compiler = function(file_path, callback) {
     var base_path, check, compiler, file_path_ext, i, len, path_ext, ref, source_path, url_ext;
     file_path_ext = path.extname(file_path);
     ref = exports.compile_types;
