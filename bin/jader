@@ -26,7 +26,6 @@ program
 .usage('[options]')
 .option('-h, --hostname <host>', 'Set host [localhost]', String, 'localhost')
 .option('-p, --port <port>', 'Set port [80]', Number, 80)
-//.option('-c, --compile', 'Compile the pages')
 .on('--help', show_help)
 .parse(process.argv);
 
